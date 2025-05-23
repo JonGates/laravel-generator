@@ -118,9 +118,9 @@ class ViewGenerator extends BaseGenerator
         $tableBodyFields = [];
 
         foreach ($this->config->fields as $field) {
-            if (!$field->inIndex) {
-                continue;
-            }
+            // if (!$field->inIndex) {
+            //     continue;
+            // }
 
             $tableBodyFields[] = view($this->templateViewPath.'.scaffold.table.blade.cell', [
                 'modelVariable' => $this->config->modelNames->camel,
@@ -144,9 +144,9 @@ class ViewGenerator extends BaseGenerator
         $headerFields = [];
 
         foreach ($this->config->fields as $field) {
-            if (!$field->inIndex) {
-                continue;
-            }
+            // if (!$field->inIndex) {
+            //     continue;
+            // }
 
             $headerFields[] = view(
                 $this->templateType.'::templates.scaffold.table.blade.header',
