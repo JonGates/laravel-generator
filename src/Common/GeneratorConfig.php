@@ -112,79 +112,85 @@ class GeneratorConfig
     public function loadPaths()
     {
         $paths = new GeneratorPaths();
-
+    
         $namespacePrefix = $this->prefixes->namespace;
         $viewPrefix = $this->prefixes->view;
-
+    
         if (!empty($namespacePrefix)) {
             $namespacePrefix .= '/';
         }
-
+    
         if (!empty($viewPrefix)) {
             $viewPrefix .= '/';
         }
-
+    
         $paths->repository = config(
             'laravel_generator.path.repository',
             app_path('Repositories/')
         ).$namespacePrefix;
-
+    
         $paths->model = config('laravel_generator.path.model', app_path('Models/')).$namespacePrefix;
-
+    
         $paths->dataTables = config(
             'laravel_generator.path.datatables',
             app_path('DataTables/')
         ).$namespacePrefix;
-
+    
         $paths->livewireTables = config(
             'laravel_generator.path.livewire_tables',
             app_path('Http/Livewire/')
         );
-
+    
         $paths->apiController = config(
             'laravel_generator.path.api_controller',
             app_path('Http/Controllers/API/')
         ).$namespacePrefix;
-
+    
         $paths->apiResource = config(
             'laravel_generator.path.api_resource',
             app_path('Http/Resources/')
         ).$namespacePrefix;
-
+    
         $paths->apiRequest = config(
             'laravel_generator.path.api_request',
             app_path('Http/Requests/API/')
         ).$namespacePrefix;
-
+    
         $paths->apiRoutes = config(
             'laravel_generator.path.api_routes',
             base_path('routes/api.php')
         );
-
+    
         $paths->apiTests = config('laravel_generator.path.api_test', base_path('tests/APIs/'));
-
+    
         $paths->controller = config(
             'laravel_generator.path.controller',
             app_path('Http/Controllers/')
         ).$namespacePrefix;
-
+    
         $paths->request = config('laravel_generator.path.request', app_path('Http/Requests/')).$namespacePrefix;
-
+    
+        // Add this line after the request path assignment
+        $paths->service = config(
+            'laravel_generator.path.service',
+            app_path('Services/')
+        ).$namespacePrefix;
+    
         $paths->routes = config('laravel_generator.path.routes', base_path('routes/web.php'));
         $paths->factory = config('laravel_generator.path.factory', database_path('factories/'));
-
+    
         $paths->views = config(
             'laravel_generator.path.views',
             resource_path('views/')
         ).$viewPrefix.$this->modelNames->snakePlural.'/';
-
+    
         $paths->seeder = config('laravel_generator.path.seeder', database_path('seeders/'));
         $paths->databaseSeeder = config('laravel_generator.path.database_seeder', database_path('seeders/DatabaseSeeder.php'));
         $paths->viewProvider = config(
             'laravel_generator.path.view_provider',
             app_path('Providers/ViewServiceProvider.php')
         );
-
+    
         $this->paths = $paths;
     }
 
@@ -203,6 +209,7 @@ class GeneratorConfig
         $namespaces->repository = config('laravel_generator.namespace.repository', 'App\Repositories').$prefix;
         $namespaces->model = config('laravel_generator.namespace.model', 'App\Models').$prefix;
         $namespaces->seeder = config('laravel_generator.namespace.seeder', 'Database\Seeders').$prefix;
+        $namespaces->service = config('laravel_generator.namespace.service', 'App\Service').$prefix;
         $namespaces->factory = config('laravel_generator.namespace.factory', 'Database\Factories').$prefix;
         $namespaces->dataTables = config('laravel_generator.namespace.datatables', 'App\DataTables').$prefix;
         $namespaces->livewireTables = config('laravel_generator.namespace.livewire_tables', 'App\Http\Livewire');

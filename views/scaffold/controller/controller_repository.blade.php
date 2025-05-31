@@ -10,24 +10,48 @@ use {{ $config->namespaces->dataTables }}\{{ $config->modelNames->name }}DataTab
 use {{ $config->namespaces->request }}\Create{{ $config->modelNames->name }}Request;
 use {{ $config->namespaces->request }}\Update{{ $config->modelNames->name }}Request;
 use {{ $config->namespaces->app }}\Http\Controllers\AppBaseController;
+use {{ $config->namespaces->model }}\{{ $config->modelNames->name }};
+use {{ $config->namespaces->service }}\{{ $config->modelNames->name }}Service;
 use {{ $config->namespaces->repository }}\{{ $config->modelNames->name }}Repository;
 use Illuminate\Http\Request;
-use Flash;
+use Laracasts\Flash\Flash;
 
 class {{ $config->modelNames->name }}Controller extends AppBaseController
 {
-    /** @var {{ $config->modelNames->name }}Repository ${{ $config->modelNames->camel }}Repository*/
-    private ${{ $config->modelNames->camel }}Repository;
+    private {{ $config->modelNames->name }}Service ${{ $config->modelNames->camel }}Service;
+    private {{ $config->modelNames->name }}Repository ${{ $config->modelNames->camel }}Repository;
 
-    public function __construct({{ $config->modelNames->name }}Repository ${{ $config->modelNames->camel }}Repo)
+    public function __construct({{ $config->modelNames->name }}Repository ${{ $config->modelNames->camel }}Repository, {{ $config->modelNames->name }}Service ${{ $config->modelNames->camel }}Service)
     {
-        $this->{{ $config->modelNames->camel }}Repository = ${{ $config->modelNames->camel }}Repo;
+        $this->{{ $config->modelNames->camel }}Service = ${{ $config->modelNames->camel }}Service;
+        $this->{{ $config->modelNames->camel }}Repository = ${{ $config->modelNames->camel }}Repository;
+        
+        // 中间件
+        // $this->middleware('permission:view-{{ $config->modelNames->camel }}')->only(['index', 'show']);
+        // $this->middleware('permission:create-{{ $config->modelNames->camel }}')->only(['create', 'store']);
+        // $this->middleware('permission:edit-{{ $config->modelNames->camel }}')->only(['edit', 'update']);
+        // $this->middleware('permission:delete-{{ $config->modelNames->camel }}')->only(['destroy']);
     }
 
     /**
      * Display a listing of the {{ $config->modelNames->name }}.
      */
-    {!! $indexMethod !!}
+    public function index(Request $request)
+    {
+        $query = $this->{{ $config->modelNames->camel }}Repository->allQuery();
+
+        // 处理搜索条件
+        $query = $this->{{ $config->modelNames->camel }}Repository->applySearchConditions($query, $request);
+
+        // 其他查询条件，如排序等
+        
+        // 分页处理
+        $perPage = $request->get('limit', 10);
+        ${{ $config->modelNames->camelPlural }} = $query->paginate($perPage)->appends(request()->except('page'));
+
+        return view('{{ $config->prefixes->getViewPrefixForInclude() }}{{ $config->modelNames->snakePlural }}.index')
+            ->with('{{ $config->modelNames->camelPlural }}', ${{ $config->modelNames->camelPlural }});
+    }
 
     /**
      * Show the form for creating a new {{ $config->modelNames->name }}.

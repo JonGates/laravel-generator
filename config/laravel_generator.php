@@ -15,29 +15,31 @@ return [
 
         'model'             => app_path('Models/'),
 
+        'repository'        => app_path('Repositories/'),
+
         'datatables'        => app_path('DataTables/'),
 
         'livewire_tables'   => app_path('Http/Livewire/'),
 
-        'repository'        => app_path('Repositories/'),
-
         'routes'            => base_path('routes/web.php'),
+
+        'request'           => app_path('Http/Requests/Admin/'),
+
+        'controller'        => app_path('Http/Controllers/Admin/'),
 
         'api_routes'        => base_path('routes/api.php'),
 
-        'request'           => app_path('Http/Requests/'),
+        'api_controller'    => app_path('Http/Controllers/API/'),
 
         'api_request'       => app_path('Http/Requests/API/'),
-
-        'controller'        => app_path('Http/Controllers/'),
-
-        'api_controller'    => app_path('Http/Controllers/API/'),
 
         'api_resource'      => app_path('Http/Resources/'),
 
         'schema_files'      => resource_path('model_schemas/'),
 
         'seeder'            => database_path('seeders/'),
+
+        'service'           => app_path('Services/'),
 
         'database_seeder'   => database_path('seeders/DatabaseSeeder.php'),
 
@@ -73,17 +75,17 @@ return [
 
         'repository'        => 'App\Repositories',
 
-        'controller'        => 'App\Http\Controllers',
+        'controller'        => 'App\Http\Controllers\Admin',
+
+        'request'           => 'App\Http\Requests\Admin',
 
         'api_controller'    => 'App\Http\Controllers\API',
 
         'api_resource'      => 'App\Http\Resources',
 
-        'request'           => 'App\Http\Requests',
-
-        'api_request'       => 'App\Http\Requests\API',
-
         'seeder'            => 'Database\Seeders',
+
+        'service'           => 'App\Services',
 
         'factory'           => 'Database\Factories',
 
@@ -130,7 +132,7 @@ return [
 
     'options' => [
 
-        'soft_delete' => false,
+        'soft_delete' => true,
 
         'save_schema_file' => true,
 
@@ -160,11 +162,11 @@ return [
 
     'prefixes' => [
 
-        'route' => '',  // e.g. admin or admin.shipping or admin.shipping.logistics
+        'route' => 'admin',  // e.g. admin or admin.shipping or admin.shipping.logistics
 
         'namespace' => '',  // e.g. Admin or Admin\Shipping or Admin\Shipping\Logistics
 
-        'view' => '',  // e.g. admin or admin/shipping or admin/shipping/logistics
+        'view' => 'admin',  // e.g. admin or admin/shipping or admin/shipping/logistics
     ],
 
     /*

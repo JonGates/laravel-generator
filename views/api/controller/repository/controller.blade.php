@@ -7,6 +7,7 @@ namespace {{ $config->namespaces->apiController }};
 use {{ $config->namespaces->apiRequest }}\Create{{ $config->modelNames->name }}APIRequest;
 use {{ $config->namespaces->apiRequest }}\Update{{ $config->modelNames->name }}APIRequest;
 use {{ $config->namespaces->model }}\{{ $config->modelNames->name }};
+use {{ $config->namespaces->service }}\{{ $config->modelNames->name }}Service;
 use {{ $config->namespaces->repository }}\{{ $config->modelNames->name }}Repository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,21 +16,32 @@ use {{ $config->namespaces->app }}\Http\Controllers\AppBaseController;
 {!! $docController !!}
 class {{ $config->modelNames->name }}APIController extends AppBaseController
 {
+    private {{ $config->modelNames->name }}Service ${{ $config->modelNames->camel }}Service;
     private {{ $config->modelNames->name }}Repository ${{ $config->modelNames->camel }}Repository;
 
-    public function __construct({{ $config->modelNames->name }}Repository ${{ $config->modelNames->camel }}Repo)
+    public function __construct({{ $config->modelNames->name }}Repository ${{ $config->modelNames->camel }}Repository, {{ $config->modelNames->name }}Service ${{ $config->modelNames->camel }}Service)
     {
-        $this->{{ $config->modelNames->camel }}Repository = ${{ $config->modelNames->camel }}Repo;
+        $this->{{ $config->modelNames->camel }}Service = ${{ $config->modelNames->camel }}Service;
+        $this->{{ $config->modelNames->camel }}Repository = ${{ $config->modelNames->camel }}Repository;
     }
 
     {!! $docIndex !!}
     public function index(Request $request): JsonResponse
-    {
-        ${{ $config->modelNames->camelPlural }} = $this->{{ $config->modelNames->camel }}Repository->all(
-            $request->except(['skip', 'limit']),
-            $request->get('skip'),
-            $request->get('limit')
-        );
+    {        
+        $query = $this->{{ $config->modelNames->camel }}Repository->allQuery();
+
+        // 处理搜索条件
+        $query = $this->{{ $config->modelNames->camel }}Repository->applySearchConditions($query, $request);
+
+        // 其他查询条件，如排序等
+
+        // 分页处理
+        $perPage = $request->get('limit', 10);
+        $page = $request->get('page', 1);
+        $skip = $request->get('skip', ($page - 1) * $perPage);
+        
+        ${{ $config->modelNames->camelPlural }} = $query->skip($skip)->take($perPage)->get();
+        $total = $query->count();
 
 @if($config->options->localized)
         return $this->sendResponse(

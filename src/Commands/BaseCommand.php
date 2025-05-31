@@ -33,6 +33,7 @@ use InfyOm\Generator\Utils\TableFieldsGenerator;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\VarExporter\VarExporter;
+use InfyOm\Generator\Generators\ServiceGenerator;
 
 class BaseCommand extends Command
 {
@@ -71,6 +72,12 @@ class BaseCommand extends Command
         if (!$this->isSkip('repository') && $this->config->options->repositoryPattern) {
             $repositoryGenerator = app(RepositoryGenerator::class);
             $repositoryGenerator->generate();
+        }
+
+        // 添加Service生成
+        if (!$this->isSkip('service')) {
+            $serviceGenerator = app(ServiceGenerator::class);
+            $serviceGenerator->generate();
         }
 
         if ($this->config->options->factory || (!$this->isSkip('tests') and $this->config->options->tests)) {
