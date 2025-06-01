@@ -4,154 +4,215 @@
 
 namespace {{ $namespaceApp }}Repositories;
 
+// 引入Laravel容器类，用于依赖注入
 use Illuminate\Container\Container as Application;
+// 引入分页接口，用于数据分页
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+// 引入查询构建器，用于构建数据库查询
 use Illuminate\Database\Eloquent\Builder;
+// 引入集合类，用于处理模型集合
 use Illuminate\Database\Eloquent\Collection;
+// 引入Eloquent模型基类
 use Illuminate\Database\Eloquent\Model;
+// 引入请求类，用于处理HTTP请求
+use Illuminate\Http\Request;
 
+// 抽象基础仓库类，所有具体仓库都继承此类
 abstract class BaseRepository
 {
     /**
      * @var Model
+     * 受保护的模型实例属性
      */
     protected $model;
 
     /**
-     * @throws \Exception
+     * 构造函数
+     * @throws \Exception 如果模型创建失败则抛出异常
      */
     public function __construct()
     {
+        // 调用makeModel方法初始化模型实例
         $this->makeModel();
     }
 
     /**
-     * Get searchable fields array
+     * 获取可搜索字段数组的抽象方法
+     * 子类必须实现此方法来定义哪些字段可以被搜索
      */
     abstract public function getFieldsSearchable(): array;
 
     /**
-     * Configure the Model
+     * 配置模型的抽象方法
+     * 子类必须实现此方法来指定使用的模型类
      */
     abstract public function model(): string;
 
     /**
-     * Make Model instance
+     * 创建模型实例
      *
-     * @throws \Exception
+     * @throws \Exception 如果模型类不是Model的实例则抛出异常
      *
-     * @return Model
+     * @return Model 返回模型实例
      */
     public function makeModel()
     {
+        // 通过Laravel容器创建模型实例
         $model = app($this->model());
 
+        // 检查创建的实例是否为Model类型
         if (!$model instanceof Model) {
+            // 如果不是Model实例，抛出异常
             throw new \Exception("Class {$this->model()} must be an instance of Illuminate\\Database\\Eloquent\\Model");
         }
 
+        // 将创建的模型实例赋值给属性并返回
         return $this->model = $model;
     }
 
     /**
-     * Paginate records for scaffold.
+     * 为脚手架分页记录
+     * @param int $perPage 每页显示的记录数
+     * @param array $columns 要查询的字段，默认为所有字段
+     * @return LengthAwarePaginator 返回分页器实例
      */
     public function paginate(int $perPage, array $columns = ['*']): LengthAwarePaginator
     {
+        // 获取查询构建器
         $query = $this->allQuery();
 
+        // 执行分页查询并返回分页器
         return $query->paginate($perPage, $columns);
     }
 
     /**
-     * Build a query for retrieving all records.
+     * 构建用于检索所有记录的查询
+     * @param array $search 搜索条件数组
+     * @param int $skip 跳过的记录数
+     * @param int $limit 限制返回的记录数
+     * @return Builder 返回查询构建器
      */
     public function allQuery(array $search = [], int $skip = null, int $limit = null): Builder
     {
+        // 创建新的查询构建器实例
         $query = $this->model->newQuery();
 
+        // 如果有搜索条件
         if (count($search)) {
+            // 遍历搜索条件
             foreach($search as $key => $value) {
+                // 检查字段是否在可搜索字段列表中
                 if (in_array($key, $this->getFieldsSearchable())) {
+                    // 添加where条件到查询
                     $query->where($key, $value);
                 }
             }
         }
 
+        // 如果设置了跳过记录数
         if (!is_null($skip)) {
+            // 添加skip条件
             $query->skip($skip);
         }
 
+        // 如果设置了限制记录数
         if (!is_null($limit)) {
+            // 添加limit条件
             $query->limit($limit);
         }
 
+        // 返回构建好的查询
         return $query;
     }
 
     /**
-     * Retrieve all records with given filter criteria
+     * 根据给定的过滤条件检索所有记录
+     * @param array $search 搜索条件
+     * @param int $skip 跳过的记录数
+     * @param int $limit 限制记录数
+     * @param array $columns 要查询的字段
+     * @return Collection 返回模型集合
      */
     public function all(array $search = [], int $skip = null, int $limit = null, array $columns = ['*']): Collection
     {
+        // 获取查询构建器
         $query = $this->allQuery($search, $skip, $limit);
 
+        // 执行查询并返回集合
         return $query->get($columns);
     }
 
     /**
-     * Create model record
+     * 创建模型记录
+     * @param array $input 要创建的数据数组
+     * @return Model 返回创建的模型实例
      */
     public function create(array $input): Model
     {
+        // 创建新的模型实例并填充数据
         $model = $this->model->newInstance($input);
 
+        // 保存模型到数据库
         $model->save();
 
+        // 返回保存后的模型实例
         return $model;
     }
 
     /**
-     * Find model record for given id
-     *
+     * 根据给定ID查找模型记录
+     * @param int $id 要查找的记录ID
+     * @param array $columns 要查询的字段
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model|null
      */
     public function find(int $id, array $columns = ['*'])
     {
+        // 创建新的查询构建器
         $query = $this->model->newQuery();
 
+        // 根据ID查找记录并返回
         return $query->find($id, $columns);
     }
 
     /**
-     * Update model record for given id
-     *
+     * 根据给定ID更新模型记录
+     * @param array $input 要更新的数据
+     * @param int $id 要更新的记录ID
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model
      */
     public function update(array $input, int $id)
     {
+        // 创建新的查询构建器
         $query = $this->model->newQuery();
 
+        // 根据ID查找记录，如果不存在则抛出异常
         $model = $query->findOrFail($id);
 
+        // 用新数据填充模型
         $model->fill($input);
 
+        // 保存更新后的模型
         $model->save();
 
+        // 返回更新后的模型实例
         return $model;
     }
 
     /**
-     * @throws \Exception
-     *
-     * @return bool|mixed|null
+     * 删除指定ID的记录
+     * @param int $id 要删除的记录ID
+     * @throws \Exception 如果删除失败则抛出异常
+     * @return bool|mixed|null 返回删除结果
      */
     public function delete(int $id)
     {
+        // 创建新的查询构建器
         $query = $this->model->newQuery();
 
+        // 根据ID查找记录，如果不存在则抛出异常
         $model = $query->findOrFail($id);
 
+        // 删除模型记录并返回结果
         return $model->delete();
     }
 
@@ -220,7 +281,7 @@ abstract class BaseRepository
         $allParams = $request->all();
         
         // 排除系统参数
-        $excludeParams = ['page', 'per_page', 'query', 'search', 'field'];
+        $excludeParams = ['page', 'per_page', 'query', 'search', 'field', 'sort', 'sort_type', 'limit', 'skip'];
         
         foreach ($allParams as $fieldName => $fieldValue) {
             // 跳过系统参数和空值

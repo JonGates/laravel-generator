@@ -2,6 +2,8 @@
 
 namespace InfyOm\Generator\Generators;
 
+use Illuminate\Support\Str;
+
 class ServiceGenerator extends BaseGenerator
 {
     private string $fileName;
@@ -23,11 +25,17 @@ class ServiceGenerator extends BaseGenerator
 
     public function generate()
     {
+
+        $this->config->commandComment(infy_nl().'Service created: ');
+        if (file_exists($this->path.$this->fileName)) {
+            $this->config->commandInfo($this->fileName.' already exists. It needs to be manually deleted before you can recreate it.');
+            return;
+        }
+
         $templateData = view('laravel-generator::service.service', $this->variables())->render();
 
         g_filesystem()->createFile($this->path.$this->fileName, $templateData);
 
-        $this->config->commandComment(infy_nl().'Service created: ');
         $this->config->commandInfo($this->fileName);
     }
 
@@ -50,4 +58,5 @@ class ServiceGenerator extends BaseGenerator
             $this->config->commandComment('Service file deleted: '.$this->fileName);
         }
     }
+
 }
