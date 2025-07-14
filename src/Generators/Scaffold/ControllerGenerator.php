@@ -3,6 +3,7 @@
 namespace InfyOm\Generator\Generators\Scaffold;
 
 use Exception;
+use Illuminate\Support\Str;
 use InfyOm\Generator\Generators\BaseGenerator;
 
 class ControllerGenerator extends BaseGenerator
@@ -10,18 +11,46 @@ class ControllerGenerator extends BaseGenerator
     private string $templateType;
 
     private string $fileName;
+    
+    protected $mode = '';
+    
+    // 保存原始命名空间和路径，避免多次调用时状态污染
+    private string $originalNamespace;
+    private string $originalPath;
 
     public function __construct()
     {
         parent::__construct();
 
-        $this->path = $this->config->paths->controller;
+        $this->originalPath = $this->config->paths->controller;
+        $this->originalNamespace = $this->config->namespaces->controller;
+        $this->path = $this->originalPath;
         $this->templateType = config('laravel_generator.templates', 'adminlte-templates');
         $this->fileName = $this->config->modelNames->name.'Controller.php';
     }
 
-    public function generate()
+    public function generate($mode = '')
     {
+        $this->mode = $mode;
+        
+        // 每次生成前重置为原始状态，避免状态污染
+        $this->config->namespaces->controller = $this->originalNamespace;
+        $this->path = $this->originalPath;
+        
+        if ($this->mode) {
+            // 基于原始命名空间拼接新模式
+            $newNamespace = $this->originalNamespace . '\\' . Str::title($this->mode);
+            // 更新控制器命名空间
+            $this->config->namespaces->controller = $newNamespace;
+
+            $this->path = $this->originalPath . Str::title($this->mode) . '/';
+            
+            $this->config->prefixes->route = $this->mode;
+            
+            $this->config->prefixes->view = $this->mode;
+
+        }
+        
         $variables = [];
 
         switch ($this->config->tableType) {

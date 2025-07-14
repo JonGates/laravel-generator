@@ -23,9 +23,9 @@ return [
 
         'routes'            => base_path('routes/web.php'),
 
-        'request'           => app_path('Http/Requests/Admin/'),
+        'request'           => app_path('Http/Requests/'),
 
-        'controller'        => app_path('Http/Controllers/Admin/'),
+        'controller'        => app_path('Http/Controllers/'),
 
         'api_routes'        => base_path('routes/api.php'),
 
@@ -33,7 +33,7 @@ return [
 
         'api_request'       => app_path('Http/Requests/API/'),
 
-        'api_resource'      => app_path('Http/Resources/'),
+        'api_resource'      => app_path('Http/Resources/API/'),
 
         'schema_files'      => resource_path('model_schemas/'),
 
@@ -73,27 +73,29 @@ return [
 
         'livewire_tables'   => 'App\Http\Livewire',
 
-        'repository'        => 'App\Repositories',
-
-        'controller'        => 'App\Http\Controllers\Admin',
-
-        'request'           => 'App\Http\Requests\Admin',
-
-        'api_controller'    => 'App\Http\Controllers\API',
-
-        'api_resource'      => 'App\Http\Resources',
-
         'seeder'            => 'Database\Seeders',
 
         'service'           => 'App\Services',
 
         'factory'           => 'Database\Factories',
 
+        'repository'        => 'App\Repositories',
+
+        'controller'        => 'App\Http\Controllers',
+
+        'request'           => 'App\Http\Requests',
+
+        'api_controller'    => 'App\Http\Controllers\API',
+
+        'api_resource'      => 'App\Http\Resources\API',
+
+        'api_request'       => 'App\Http\Requests\API',
+
         'tests'             => 'Tests',
 
+        'api_test'          => 'Tests\API',
+        
         'repository_test'   => 'Tests\Repositories',
-
-        'api_test'          => 'Tests\APIs',
     ],
 
     /*
@@ -140,7 +142,7 @@ return [
 
         'repository_pattern' => true,
 
-        'resources' => false,
+        'resources' => true,
 
         'factory' => false,
 
@@ -162,11 +164,11 @@ return [
 
     'prefixes' => [
 
-        'route' => 'admin',  // e.g. admin or admin.shipping or admin.shipping.logistics
+        'route' => '',  // e.g. admin or admin.shipping or admin.shipping.logistics
 
         'namespace' => '',  // e.g. Admin or Admin\Shipping or Admin\Shipping\Logistics
 
-        'view' => 'admin',  // e.g. admin or admin/shipping or admin/shipping/logistics
+        'view' => '',  // e.g. admin or admin/shipping or admin/shipping/logistics
     ],
 
     /*

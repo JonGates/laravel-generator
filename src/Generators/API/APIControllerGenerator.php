@@ -15,6 +15,7 @@ class APIControllerGenerator extends BaseGenerator
 
         $this->path = $this->config->paths->apiController;
         $this->fileName = $this->config->modelNames->name.'APIController.php';
+
     }
 
     public function variables(): array

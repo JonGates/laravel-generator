@@ -7,8 +7,8 @@ namespace {{ $config->namespaces->controller }};
 @if(config('laravel_generator.tables') == 'datatables')
 use {{ $config->namespaces->dataTables }}\{{ $config->modelNames->name }}DataTable;
 @endif
-use {{ $config->namespaces->request }}\Create{{ $config->modelNames->name }}Request;
-use {{ $config->namespaces->request }}\Update{{ $config->modelNames->name }}Request;
+use {{ $config->namespaces->request }}\{{ $config->modelNames->name }}CreateRequest;
+use {{ $config->namespaces->request }}\{{ $config->modelNames->name }}UpdateRequest;
 use {{ $config->namespaces->app }}\Http\Controllers\AppBaseController;
 use {{ $config->namespaces->model }}\{{ $config->modelNames->name }};
 use Illuminate\Http\Request;
@@ -32,7 +32,7 @@ class {{ $config->modelNames->name }}Controller extends AppBaseController
     /**
      * Store a newly created {{ $config->modelNames->name }} in storage.
      */
-    public function store(Create{{ $config->modelNames->name }}Request $request)
+    public function store({{ $config->modelNames->name }}CreateRequest $request)
     {
         $input = $request->all();
 
@@ -73,7 +73,7 @@ class {{ $config->modelNames->name }}Controller extends AppBaseController
     /**
      * Update the specified {{ $config->modelNames->name }} in storage.
      */
-    public function update($id, Update{{ $config->modelNames->name }}Request $request)
+    public function update($id, {{ $config->modelNames->name }}UpdateRequest $request)
     {
         /** @var {{ $config->modelNames->name }} ${{ $config->modelNames->camel }} */
         ${{ $config->modelNames->camel }} = {{ $config->modelNames->name }}::find($id);

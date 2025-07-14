@@ -12,6 +12,9 @@ class APIRoutesGenerator extends BaseGenerator
         parent::__construct();
 
         $this->path = $this->config->paths->apiRoutes;
+
+        $this->config->prefixes->route = config('laravel_generator.api_prefix');
+
     }
 
     public function generate()

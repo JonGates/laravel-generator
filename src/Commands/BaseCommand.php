@@ -40,6 +40,7 @@ class BaseCommand extends Command
     public GeneratorConfig $config;
 
     public Composer $composer;
+    protected $mode = '';
 
     public function __construct()
     {
@@ -124,31 +125,31 @@ class BaseCommand extends Command
         }
     }
 
-    public function generateScaffoldItems()
+    public function generateScaffoldItems($mode = '')
     {
         if (!$this->isSkip('requests') and !$this->isSkip('scaffold_requests')) {
             $requestGenerator = app(RequestGenerator::class);
-            $requestGenerator->generate();
+            $requestGenerator->generate($mode);
         }
 
         if (!$this->isSkip('controllers') and !$this->isSkip('scaffold_controller')) {
             $controllerGenerator = app(ControllerGenerator::class);
-            $controllerGenerator->generate();
+            $controllerGenerator->generate($mode);
         }
 
         if (!$this->isSkip('views')) {
             $viewGenerator = app(ViewGenerator::class);
-            $viewGenerator->generate();
+            $viewGenerator->generate($mode);
         }
 
         if (!$this->isSkip('routes') and !$this->isSkip('scaffold_routes')) {
             $routeGenerator = app(RoutesGenerator::class);
-            $routeGenerator->generate();
+            $routeGenerator->generate($mode);
         }
 
         if (!$this->isSkip('menu')) {
             $menuGenerator = app(MenuGenerator::class);
-            $menuGenerator->generate();
+            $menuGenerator->generate($mode);
         }
     }
 

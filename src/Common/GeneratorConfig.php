@@ -148,7 +148,7 @@ class GeneratorConfig
     
         $paths->apiResource = config(
             'laravel_generator.path.api_resource',
-            app_path('Http/Resources/')
+            app_path('Http/Resources/API/')
         ).$namespacePrefix;
     
         $paths->apiRequest = config(
@@ -161,7 +161,7 @@ class GeneratorConfig
             base_path('routes/api.php')
         );
     
-        $paths->apiTests = config('laravel_generator.path.api_test', base_path('tests/APIs/'));
+        $paths->apiTests = config('laravel_generator.path.api_test', base_path('tests/API/'));
     
         $paths->controller = config(
             'laravel_generator.path.controller',

@@ -9,7 +9,7 @@ class APIScaffoldGeneratorCommand extends BaseCommand
      *
      * @var string
      */
-    protected $name = 'infyom:api_scaffold';
+    protected $name = 'infyom:all';
 
     /**
      * The console command description.
@@ -29,10 +29,13 @@ class APIScaffoldGeneratorCommand extends BaseCommand
         $this->fireFileCreatingEvent('api_scaffold');
 
         $this->generateCommonItems();
-
+        // api，固定模式
         $this->generateAPIItems();
 
-        $this->generateScaffoldItems();
+        // web 自定义模式
+        $this->generateScaffoldItems('web');
+        // admin 自定义模式
+        $this->generateScaffoldItems('admin');
 
         $this->performPostActionsWithMigration();
         $this->fireFileCreatedEvent('api_scaffold');

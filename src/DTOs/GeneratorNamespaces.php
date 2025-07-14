@@ -12,6 +12,7 @@ class GeneratorNamespaces
     public string $modelExtend;
 
     public string $seeder;
+    public string $service;
     public string $factory;
 
     public string $apiController;
