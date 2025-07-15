@@ -28,12 +28,11 @@ class RoutesGenerator extends BaseGenerator
         $this->path = $this->originalPath;
         
         if ($this->mode) {
+            // 使用setMode来正确设置所有相关的路径和前缀
+            $this->config->setMode($this->mode);
             // 根据mode选择不同的路由文件
             $routeFileName = strtolower($this->mode) . '.php';
             $this->path = dirname($this->originalPath) . '/' . $routeFileName;
-
-            $this->config->prefixes->route = $this->mode;
-            $this->config->prefixes->view = $this->mode;
         }
         
         $routeContents = g_filesystem()->getFile($this->path);

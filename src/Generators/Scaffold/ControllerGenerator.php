@@ -10,6 +10,8 @@ class ControllerGenerator extends BaseGenerator
 {
     private string $templateType;
 
+    private string $namespace;
+
     private string $fileName;
     
     protected $mode = '';
@@ -32,23 +34,16 @@ class ControllerGenerator extends BaseGenerator
     public function generate($mode = '')
     {
         $this->mode = $mode;
-        
-        // 每次生成前重置为原始状态，避免状态污染
-        $this->config->namespaces->controller = $this->originalNamespace;
-        $this->path = $this->originalPath;
-        
+        // 如果有自定义模式，才更新命名空间和路径
         if ($this->mode) {
-            // 基于原始命名空间拼接新模式
-            $newNamespace = $this->originalNamespace . '\\' . Str::title($this->mode);
-            // 更新控制器命名空间
-            $this->config->namespaces->controller = $newNamespace;
-
-            $this->path = $this->originalPath . Str::title($this->mode) . '/';
-            
-            $this->config->prefixes->route = $this->mode;
-            
-            $this->config->prefixes->view = $this->mode;
-
+            $this->config->setMode($this->mode);
+            // setMode后重新获取正确的命名空间和路径
+            $this->namespace = $this->config->namespaces->controller;
+            $this->path = $this->config->paths->controller;
+        } else {
+            // 没有mode时使用原始值
+            $this->namespace = $this->originalNamespace;
+            $this->path = $this->originalPath;
         }
         
         $variables = [];

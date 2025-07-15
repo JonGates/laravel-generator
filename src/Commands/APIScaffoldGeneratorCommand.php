@@ -32,6 +32,7 @@ class APIScaffoldGeneratorCommand extends BaseCommand
         // api，固定模式
         $this->generateAPIItems();
 
+        dump('开始');
         // web 自定义模式
         $this->generateScaffoldItems('web');
         // admin 自定义模式

@@ -127,6 +127,11 @@ class BaseCommand extends Command
 
     public function generateScaffoldItems($mode = '')
     {
+        // 设置mode到config中，这样所有生成器都能使用正确的路径和命名空间
+        if (!empty($mode)) {
+            $this->config->setMode($mode);
+        }
+        
         if (!$this->isSkip('requests') and !$this->isSkip('scaffold_requests')) {
             $requestGenerator = app(RequestGenerator::class);
             $requestGenerator->generate($mode);

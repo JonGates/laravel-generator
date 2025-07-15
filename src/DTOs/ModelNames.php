@@ -5,6 +5,7 @@ namespace InfyOm\Generator\DTOs;
 class ModelNames
 {
     public string $name;
+    public string $namespace;
     public string $plural;
     public string $camel;
     public string $camelPlural;

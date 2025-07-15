@@ -17,6 +17,7 @@ class RequestGenerator extends BaseGenerator
     // 保存原始命名空间，避免多次调用时状态污染
     private string $originalNamespace;
     private string $originalPath;
+    private string $namespace;
 
     public function __construct()
     {
@@ -25,6 +26,7 @@ class RequestGenerator extends BaseGenerator
         $this->originalPath = $this->config->paths->request;
         $this->originalNamespace = $this->config->namespaces->request;
         $this->path = $this->originalPath;
+        $this->namespace = $this->originalNamespace;
         $this->createFileName = $this->config->modelNames->name.'CreateRequest.php';
         $this->updateFileName = $this->config->modelNames->name.'UpdateRequest.php';
     }
@@ -32,24 +34,18 @@ class RequestGenerator extends BaseGenerator
     public function generate($mode = '')
     {
         $this->mode = $mode;
+        if ($this->mode) {
+            $this->config->setMode($this->mode);
+            // setMode后重新获取正确的命名空间和路径
+            $this->namespace = $this->config->namespaces->request;
+            $this->path = $this->config->paths->request;
+        }
         $this->generateCreateRequest();
         $this->generateUpdateRequest();
     }
 
     protected function generateCreateRequest()
     {
-        // 每次生成前重置为原始状态，避免状态污染
-        $this->config->namespaces->request = $this->originalNamespace;
-        $this->path = $this->originalPath;
-        
-        if ($this->mode) {
-            // 基于原始命名空间拼接新模式
-            $newNamespace = $this->originalNamespace . '\\' . Str::title($this->mode);
-            // 更新请求命名空间
-            $this->config->namespaces->request = $newNamespace;
-
-            $this->path = $this->originalPath . Str::title($this->mode) . '/';
-        }
 
         $templateData = view('laravel-generator::scaffold.request.create', $this->variables())->render();
 

@@ -36,10 +36,10 @@ class ViewGenerator extends BaseGenerator
         $this->path = $this->originalPath;
         
         if ($this->mode) {
-             $this->path = str_replace('views/', 'views/' . $this->mode . '/', $this->path);
-             
-             $this->config->prefixes->route = $this->mode;
-             $this->config->prefixes->view = $this->mode;
+            // 使用setMode来正确设置所有相关的路径和前缀
+            $this->config->setMode($this->mode);
+            // setMode后重新获取正确的视图路径
+            $this->path = $this->config->paths->views;
         }
         
         if (!file_exists($this->path)) {
