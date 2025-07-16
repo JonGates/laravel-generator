@@ -530,20 +530,20 @@ class GeneratorConfig
         $modelNamespace = '';
         $shouldAddMode = true;
         
-        // if (isset($this->modelNames) && !empty($this->modelNames->namespace)) {
-        //     $modelNamespace = $this->modelNames->namespace;
+        if (isset($this->modelNames) && !empty($this->modelNames->namespace)) {
+            $modelNamespace = $this->modelNames->namespace;
             
-        //     // 如果模型命名空间以mode结尾，则不重复添加mode
-        //     if (!empty($this->mode)) {
-        //         $modeUcfirst = ucfirst($this->mode);
-        //         $namespaceParts = explode('\\', $modelNamespace);
-        //         $lastPart = end($namespaceParts);
+            // 如果模型命名空间以mode结尾，则不重复添加mode
+            if (!empty($this->mode)) {
+                $modeUcfirst = ucfirst($this->mode);
+                $namespaceParts = explode('\\', $modelNamespace);
+                $lastPart = end($namespaceParts);
                 
-        //         if ($lastPart === $modeUcfirst) {
-        //             $shouldAddMode = false;
-        //         }
-        //     }
-        // }
+                if ($lastPart === $modeUcfirst) {
+                    $shouldAddMode = false;
+                }
+            }
+        }
         
         // 添加mode（如果需要且存在）
         if (!empty($this->mode) && $shouldAddMode) {
