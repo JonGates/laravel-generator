@@ -79,8 +79,10 @@ class GeneratorConfig
     {
         $this->mode = $mode;
         
-        // 当设置mode时，重新加载前缀、路径和命名空间
+        // 当设置mode时，重新加载模型名称、前缀、路径和命名空间
         if (!empty($mode)) {
+            // 先重新加载模型名称，因为buildRoutePrefix依赖于modelNames->namespace
+            $this->loadModelNames();
             $this->loadPrefixes();
             $this->loadNamespaces();
             $this->loadPaths();

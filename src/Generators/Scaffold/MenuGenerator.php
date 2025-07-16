@@ -35,7 +35,8 @@ class MenuGenerator extends BaseGenerator
             $menuFileName = strtolower($this->mode) . '_menu.blade.php';
             $this->path = dirname($this->originalPath) . '/' . $menuFileName;
 
-            $this->config->prefixes->route = $this->mode;
+            // 设置mode并重新加载配置以确保路由前缀正确包含命名空间
+            $this->config->setMode($this->mode);
             $this->config->prefixes->view = $this->mode;
 
         }
