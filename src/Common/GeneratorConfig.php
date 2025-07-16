@@ -368,6 +368,31 @@ class GeneratorConfig
             'laravel_generator.path.views',
             resource_path('views/')
         ).strtolower($fullNamespacePrefix).$this->modelNames->snakePlural.'/';
+
+        // 更新视图前缀，使控制器模板能够正确引用视图
+        // 构建视图前缀：mode + modelNamespace（用斜杠分隔）
+        $viewPrefixParts = [];
+        
+        // 添加基础视图前缀（如果存在）
+        if (!empty($this->prefixes->view)) {
+            $viewPrefixParts[] = $this->prefixes->view;
+        }
+        
+        // 添加mode（如果存在）
+        if (!empty($this->mode)) {
+            $viewPrefixParts[] = strtolower($this->mode);
+        }
+        
+        // 添加模型命名空间（如果存在）
+        if (isset($this->modelNames) && !empty($this->modelNames->namespace)) {
+            $modelNamespace = $this->modelNames->namespace;
+            // 将命名空间转换为小写并用斜杠分隔
+            $namespaceForView = strtolower(str_replace('\\', '/', $modelNamespace));
+            $viewPrefixParts[] = $namespaceForView;
+        }
+        
+        // 重新组合视图前缀
+        $this->prefixes->view = implode('/', $viewPrefixParts);
  
         $paths->seeder = config('laravel_generator.path.seeder', database_path('seeders/'));
         $paths->databaseSeeder = config('laravel_generator.path.database_seeder', database_path('seeders/DatabaseSeeder.php'));
