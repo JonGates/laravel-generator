@@ -4,8 +4,8 @@
 
 namespace {{ $config->namespaces->apiController }};
 
-use {{ $config->namespaces->apiRequest }}\Create{{ $config->modelNames->name }}APIRequest;
-use {{ $config->namespaces->apiRequest }}\Update{{ $config->modelNames->name }}APIRequest;
+use {{ $config->namespaces->apiRequest }}\{{ $config->modelNames->name }}CreateAPIRequest;
+use {{ $config->namespaces->apiRequest }}\{{ $config->modelNames->name }}UpdateAPIRequest;
 use {{ $config->namespaces->model }}\{{ $config->modelNames->name }};
 use {{ $config->namespaces->service }}\{{ $config->modelNames->name }}Service;
 use {{ $config->namespaces->repository }}\{{ $config->modelNames->name }}Repository;
@@ -23,6 +23,12 @@ class {{ $config->modelNames->name }}APIController extends AppBaseController
     {
         $this->{{ $config->modelNames->camel }}Service = ${{ $config->modelNames->camel }}Service;
         $this->{{ $config->modelNames->camel }}Repository = ${{ $config->modelNames->camel }}Repository;
+        
+        // 中间件
+        // $this->middleware('permission:view-{{ $config->modelNames->camel }}')->only(['index', 'show']);
+        // $this->middleware('permission:create-{{ $config->modelNames->camel }}')->only(['create', 'store']);
+        // $this->middleware('permission:edit-{{ $config->modelNames->camel }}')->only(['edit', 'update']);
+        // $this->middleware('permission:delete-{{ $config->modelNames->camel }}')->only(['destroy']);
     }
 
     {!! $docIndex !!}
@@ -34,13 +40,10 @@ class {{ $config->modelNames->name }}APIController extends AppBaseController
         $query = $this->{{ $config->modelNames->camel }}Repository->applySearchConditions($query, $request);
 
         // 其他查询条件，如排序等
-
+        
         // 分页处理
         $perPage = $request->get('limit', 10);
-        $page = $request->get('page', 1);
-        $skip = $request->get('skip', ($page - 1) * $perPage);
-        
-        ${{ $config->modelNames->camelPlural }} = $query->skip($skip)->take($perPage)->get();
+        ${{ $config->modelNames->camelPlural }} = $query->paginate($perPage)->appends(request()->except('page'));
         $total = $query->count();
 
 @if($config->options->localized)
@@ -54,7 +57,7 @@ class {{ $config->modelNames->name }}APIController extends AppBaseController
     }
 
     {!! $docStore !!}
-    public function store(Create{{ $config->modelNames->name }}APIRequest $request): JsonResponse
+    public function store({{ $config->modelNames->name }}CreateAPIRequest $request): JsonResponse
     {
         $input = $request->all();
 
@@ -97,7 +100,7 @@ class {{ $config->modelNames->name }}APIController extends AppBaseController
     }
 
     {!! $docUpdate !!}
-    public function update($id, Update{{ $config->modelNames->name }}APIRequest $request): JsonResponse
+    public function update($id, {{ $config->modelNames->name }}UpdateAPIRequest $request): JsonResponse
     {
         $input = $request->all();
 

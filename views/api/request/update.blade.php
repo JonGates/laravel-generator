@@ -7,7 +7,7 @@ namespace {{ $config->namespaces->apiRequest }};
 use {{ $config->namespaces->model }}\{{ $config->modelNames->name }};
 use InfyOm\Generator\Request\APIRequest;
 
-class Update{{ $config->modelNames->name }}APIRequest extends APIRequest
+class {{ $config->modelNames->name }}UpdateAPIRequest extends APIRequest
 {
     /**
      * Determine if the user is authorized to make this request.
