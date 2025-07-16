@@ -79,8 +79,9 @@ class GeneratorConfig
     {
         $this->mode = $mode;
         
-        // 当设置mode时，重新加载路径和命名空间
+        // 当设置mode时，重新加载前缀、路径和命名空间
         if (!empty($mode)) {
+            $this->loadPrefixes();
             $this->loadNamespaces();
             $this->loadPaths();
         }
@@ -243,7 +244,44 @@ class GeneratorConfig
             $prefixes->mergeViewPrefix($multiplePrefixes);
         }
 
+        // 构建完整的路由前缀，包含mode和完整的命名空间信息
+        $this->buildRoutePrefix($prefixes);
+
         $this->prefixes = $prefixes;
+    }
+
+    /**
+     * 构建路由前缀，包含mode和完整的命名空间信息
+     * 格式：基础前缀.mode.命名空间（用点分隔）
+     *
+     * @param GeneratorPrefixes $prefixes 前缀对象
+     * @return void
+     */
+    private function buildRoutePrefix(GeneratorPrefixes $prefixes): void
+    {
+        $routeParts = [];
+        
+        // 添加基础路由前缀（如果存在）
+        if (!empty($prefixes->route)) {
+            $routeParts[] = $prefixes->route;
+        }
+        
+        // 添加mode（如果存在）
+        if (!empty($this->mode)) {
+            $routeParts[] = strtolower($this->mode);
+        }
+        
+        // 添加完整的模型命名空间（如果存在）
+        if (isset($this->modelNames) && !empty($this->modelNames->namespace)) {
+            $modelNamespace = $this->modelNames->namespace;
+            
+            // 将命名空间转换为小写并用点分隔，处理多层命名空间
+            $namespaceForRoute = strtolower(str_replace('\\', '.', $modelNamespace));
+            $routeParts[] = $namespaceForRoute;
+        }
+        
+        // 重新组合路由前缀
+        $prefixes->route = implode('.', $routeParts);
     }
 
     public function loadPaths()
@@ -316,7 +354,12 @@ class GeneratorConfig
             app_path('Services/')
         ).$sharedPathPrefix;
 
-        $paths->routes = config('laravel_generator.path.routes', base_path('routes/web.php'));
+        // 根据mode动态选择路由文件
+        $routeFile = 'web.php'; // 默认路由文件
+        if (!empty($this->mode)) {
+            $routeFile = strtolower($this->mode) . '.php';
+        }
+        $paths->routes = config('laravel_generator.path.routes', base_path('routes/' . $routeFile));
         $paths->factory = config('laravel_generator.path.factory', database_path('factories/'));
 
         $paths->views = config(

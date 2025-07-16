@@ -13,8 +13,14 @@ class APIRoutesGenerator extends BaseGenerator
 
         $this->path = $this->config->paths->apiRoutes;
 
-        $this->config->prefixes->route = config('laravel_generator.api_prefix');
-
+        // 构建API路由前缀，包含命名空间
+        $apiPrefix = config('laravel_generator.api_prefix', 'api');
+        if (!empty($this->config->modelNames->namespace)) {
+            $namespacePrefix = strtolower($this->config->modelNames->namespace);
+            $this->config->prefixes->route = $apiPrefix . '.' . $namespacePrefix;
+        } else {
+            $this->config->prefixes->route = $apiPrefix;
+        }
     }
 
     public function generate()
