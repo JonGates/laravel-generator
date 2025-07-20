@@ -2,7 +2,7 @@
 
 namespace InfyOm\Generator\Commands;
 
-class APIScaffoldGeneratorCommand extends BaseCommand
+class AllGeneratorCommand extends BaseCommand
 {
     /**
      * The console command name.
@@ -16,7 +16,7 @@ class APIScaffoldGeneratorCommand extends BaseCommand
      *
      * @var string
      */
-    protected $description = 'Create a full CRUD API and Scaffold for given model';
+    protected $description = 'Create a full CRUD for given model';
 
     /**
      * Execute the command.
@@ -26,20 +26,20 @@ class APIScaffoldGeneratorCommand extends BaseCommand
     public function handle()
     {
         parent::handle();
-        $this->fireFileCreatingEvent('api_scaffold');
+        $this->fireFileCreatingEvent('all');
 
         $this->generateCommonItems();
+
         // api，固定模式
         $this->generateAPIItems();
 
-        dump('开始');
         // web 自定义模式
         $this->generateScaffoldItems('web');
         // admin 自定义模式
         $this->generateScaffoldItems('admin');
 
         $this->performPostActionsWithMigration();
-        $this->fireFileCreatedEvent('api_scaffold');
+        $this->fireFileCreatedEvent('all');
     }
 
     /**

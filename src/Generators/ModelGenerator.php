@@ -28,11 +28,26 @@ class ModelGenerator extends BaseGenerator
 
     public function generate()
     {
+        $this->config->commandComment(infy_nl().'Model created: ');
+        
         $templateData = view('laravel-generator::model.model', $this->variables())->render();
 
-        g_filesystem()->createFile($this->path.$this->fileName, $templateData);
+        $filePath = $this->path.$this->fileName;
+        
+        // Check if file exists and handle overwrite logic
+        if (file_exists($filePath)) {
+            // Check if --force option is set
+            if (isset($this->config->command) && $this->config->command->option('force')) {
+                // Force overwrite, continue generation
+            } else {
+                // Skip generation without prompting
+                $this->config->commandInfo($this->fileName.' already exists. Skipping generation.');
+                return;
+            }
+        }
 
-        $this->config->commandComment(infy_nl().'Model created: ');
+        g_filesystem()->createFile($filePath, $templateData);
+
         $this->config->commandInfo($this->fileName);
     }
 
@@ -142,7 +157,7 @@ class ModelGenerator extends BaseGenerator
         return view('swagger-generator::model.model', [
             'requiredFields' => $requiredFields,
             'properties'     => implode(','.infy_nl().' ', $properties),
-        ]);
+        ])->render();
     }
 
     protected function generateRequiredFields(): array

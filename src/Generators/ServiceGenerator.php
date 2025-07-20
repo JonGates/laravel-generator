@@ -25,11 +25,18 @@ class ServiceGenerator extends BaseGenerator
 
     public function generate()
     {
-
         $this->config->commandComment(infy_nl().'Service created: ');
+        
+        // Check if file exists and handle overwrite logic
         if (file_exists($this->path.$this->fileName)) {
-            $this->config->commandInfo($this->fileName.' already exists. It needs to be manually deleted before you can recreate it.');
-            return;
+            // Check if --force option is set
+            if (isset($this->config->command) && $this->config->command->option('force')) {
+                // Force overwrite, continue generation
+            } else {
+                // Skip generation without prompting
+                $this->config->commandInfo($this->fileName.' already exists. Skipping generation.');
+                return;
+            }
         }
 
         $templateData = view('laravel-generator::service.service', $this->variables())->render();

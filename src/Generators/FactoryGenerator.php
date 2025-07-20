@@ -54,6 +54,8 @@ class FactoryGenerator extends BaseGenerator
 
     public function generate()
     {
+        $this->config->commandComment(infy_nl().'Factory created: ');
+        
         $templateData = view('laravel-generator::model.factory', $this->variables())->render();
 
         g_filesystem()->createFile($this->path.$this->fileName, $templateData);

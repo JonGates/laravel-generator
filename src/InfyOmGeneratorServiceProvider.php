@@ -5,11 +5,12 @@ namespace InfyOm\Generator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use InfyOm\Generator\Commands\AllGeneratorCommand;
+
 use InfyOm\Generator\Commands\API\APIControllerGeneratorCommand;
 use InfyOm\Generator\Commands\API\APIGeneratorCommand;
 use InfyOm\Generator\Commands\API\APIRequestsGeneratorCommand;
 use InfyOm\Generator\Commands\API\TestsGeneratorCommand;
-use InfyOm\Generator\Commands\APIScaffoldGeneratorCommand;
 use InfyOm\Generator\Commands\Common\MigrationGeneratorCommand;
 use InfyOm\Generator\Commands\Common\ModelGeneratorCommand;
 use InfyOm\Generator\Commands\Common\RepositoryGeneratorCommand;
@@ -91,26 +92,26 @@ class InfyOmGeneratorServiceProvider extends ServiceProvider
         }
 
         $this->commands([
-            APIScaffoldGeneratorCommand::class,
+            AllGeneratorCommand::class,
 
-            APIGeneratorCommand::class,
-            APIControllerGeneratorCommand::class,
-            APIRequestsGeneratorCommand::class,
-            TestsGeneratorCommand::class,
+            // APIGeneratorCommand::class,
+            // APIControllerGeneratorCommand::class,
+            // APIRequestsGeneratorCommand::class,
+            // TestsGeneratorCommand::class,
 
-            MigrationGeneratorCommand::class,
-            ModelGeneratorCommand::class,
-            RepositoryGeneratorCommand::class,
+            // MigrationGeneratorCommand::class,
+            // ModelGeneratorCommand::class,
+            // RepositoryGeneratorCommand::class,
 
-            GeneratorPublishCommand::class,
-            PublishTablesCommand::class,
-            PublishUserCommand::class,
+            // GeneratorPublishCommand::class,
+            // PublishTablesCommand::class,
+            // PublishUserCommand::class,
 
-            ControllerGeneratorCommand::class,
-            RequestsGeneratorCommand::class,
-            ScaffoldGeneratorCommand::class,
-            ViewsGeneratorCommand::class,
-            ServiceGeneratorCommand::class,
+            // ControllerGeneratorCommand::class,
+            // RequestsGeneratorCommand::class,
+            // ScaffoldGeneratorCommand::class,
+            // ViewsGeneratorCommand::class,
+            // ServiceGeneratorCommand::class,
 
             RollbackGeneratorCommand::class,
         ]);

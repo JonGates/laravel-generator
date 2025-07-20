@@ -94,6 +94,8 @@ class BaseCommand extends Command
 
     public function generateAPIItems()
     {
+        $this->config->commandComment(infy_nl().'API Scaffold created: ');
+
         if (!$this->isSkip('requests') and !$this->isSkip('api_requests')) {
             $requestGenerator = app(APIRequestGenerator::class);
             $requestGenerator->generate();
@@ -131,6 +133,8 @@ class BaseCommand extends Command
         if (!empty($mode)) {
             $this->config->setMode($mode);
         }
+        
+        $this->config->commandComment(infy_nl().$mode.' Scaffold created: ');
         
         if (!$this->isSkip('requests') and !$this->isSkip('scaffold_requests')) {
             $requestGenerator = app(RequestGenerator::class);
@@ -278,6 +282,11 @@ class BaseCommand extends Command
 
     protected function confirmOverwrite(string $fileName, string $prompt = ''): bool
     {
+        // If --force option is set, always return true (overwrite without confirmation)
+        if ($this->option('force')) {
+            return true;
+        }
+        
         $prompt = (empty($prompt))
             ? $fileName.' already exists. Do you want to overwrite it? [y|N]'
             : $prompt;
@@ -305,6 +314,7 @@ class BaseCommand extends Command
             ['views', null, InputOption::VALUE_REQUIRED, 'Specify only the views you want generated: index,create,edit,show'],
             ['relations', null, InputOption::VALUE_NONE, 'Specify if you want to pass relationships for fields'],
             ['forceMigrate', null, InputOption::VALUE_NONE, 'Specify if you want to run migration or not'],
+            ['force', null, InputOption::VALUE_NONE, 'Force overwrite existing files without confirmation'],
             ['connection', null, InputOption::VALUE_REQUIRED, 'Specify connection name'],
         ];
     }

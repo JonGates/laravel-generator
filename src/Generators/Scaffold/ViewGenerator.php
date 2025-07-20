@@ -89,7 +89,6 @@ class ViewGenerator extends BaseGenerator
             $this->generateShow();
         }
 
-        $this->config->commandComment('Views created: ');
     }
 
     protected function generateTable()

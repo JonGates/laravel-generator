@@ -30,9 +30,22 @@ class APIRequestGenerator extends BaseGenerator
     {
         $templateData = view('laravel-generator::api.request.create', $this->variables())->render();
 
-        g_filesystem()->createFile($this->path.$this->createFileName, $templateData);
+        $filePath = $this->path.$this->createFileName;
+        
+        // Check if file exists and handle overwrite logic
+        if (file_exists($filePath)) {
+            // Check if --force option is set
+            if (isset($this->config->command) && $this->config->command->option('force')) {
+                // Force overwrite, continue generation
+            } else {
+                // Skip generation without prompting
+                $this->config->commandInfo($this->createFileName.' already exists. Skipping generation.');
+                return;
+            }
+        }
 
-        $this->config->commandComment(infy_nl().'Create Request created: ');
+        g_filesystem()->createFile($filePath, $templateData);
+
         $this->config->commandInfo($this->createFileName);
     }
 
@@ -45,9 +58,22 @@ class APIRequestGenerator extends BaseGenerator
             'uniqueRules' => $rules,
         ])->render();
 
-        g_filesystem()->createFile($this->path.$this->updateFileName, $templateData);
+        $filePath = $this->path.$this->updateFileName;
+        
+        // Check if file exists and handle overwrite logic
+        if (file_exists($filePath)) {
+            // Check if --force option is set
+            if (isset($this->config->command) && $this->config->command->option('force')) {
+                // Force overwrite, continue generation
+            } else {
+                // Skip generation without prompting
+                $this->config->commandInfo($this->updateFileName.' already exists. Skipping generation.');
+                return;
+            }
+        }
 
-        $this->config->commandComment(infy_nl().'Update Request created: ');
+        g_filesystem()->createFile($filePath, $templateData);
+
         $this->config->commandInfo($this->updateFileName);
     }
 
